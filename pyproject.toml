@@ -1,0 +1,98 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cppnano"
+version = "0.0.0"
+requires-python = ">=3.9"
+description = "C++ Bundler Command Line Interface"
+license = { text = "MIT" }
+authors = [{ name = "zetcgo", email = "cjr202321@yonsei.ac.kr" }]
+keywords = ["c++", "bundler", "minifier", "cli"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+readme = { file = "README.md", content-type = "text/markdown" }
+urls = { Homepage = "https://github.com/zetcgo/cppnano", Issues = "https://github.com/zetcgo/cppnano/issues" }
+
+[project.optional-dependencies]
+dev = ["pytest", "mypy", "ruff", "pre-commit", "build", "poethepoet", "cmake-format", "pybind11"]
+
+[project.scripts]
+cppnano = "cppnano.__main__:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+license-files = ["LICENSE*"]
+
+[tool.setuptools.package-data]
+cppnano = ["py.typed"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+files = ["src", "tests"]
+mypy_path = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+src = ["src", "tests"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "W",
+    "I",
+    "B",
+    "UP",
+    "SIM",
+    "PIE",
+    "PTH",
+    "RUF",
+    "N",
+    "C90",
+    "ANN",
+    "T20",
+    "S",
+]
+ignore = ["ANN401", "S101"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["cppnano"]
+combine-as-imports = true
+force-wrap-aliases = true
+split-on-trailing-comma = true
+
+[tool.poe.tasks]
+run = "python3 -m cppnano"
+build = "python3 -m build"
+test = "pytest -q"
+typecheck = "mypy"
+lint = "ruff check"
+format = "ruff format"
+fix = "ruff check --fix"
+ci = ["format", "lint", "typecheck", "test"]

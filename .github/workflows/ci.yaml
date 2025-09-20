@@ -1,0 +1,25 @@
+name: ci
+on:
+  push: { branches: ["main"] }
+  pull_request:
+jobs:
+  py:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: python -m pip install -U pip
+      - run: pip install .[dev]
+      - run: poe format
+      - run: poe lint
+      - run: poe typecheck
+      - run: poe test
+  style-extra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y uncrustify || true
+      - run: pipx install cmake-format || true
+      - run: git ls-files '*.cpp' '*.hpp' | xargs -r python scripts/uncrustify_fix.py
+      - run: git ls-files 'CMakeLists.txt' '*.cmake' | xargs -r cmake-format --check --config-files .cmake-format.yaml || true
